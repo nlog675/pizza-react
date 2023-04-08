@@ -1,9 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CartItem from '../components/CartItem';
-import { clearCart, removeCartItem } from '../redux/actions/cart';
+import { clearCart, removeCartItem, plusCartItem, minusCartItem } from '../redux/actions/cart';
 import cartEmptyImage from '../assets/img/empty-cart.png'
 import { Link } from 'react-router-dom';
+import Button from '../components/Button';
 
 function Cart() {
   const { totalPrice, totalCount, items } = useSelector(({ cart }) => cart);
@@ -23,6 +24,18 @@ function Cart() {
     if (window.confirm('Вы действительно хотите удалить пиццу?')) {
       dispatch(removeCartItem(id));
     }
+  }
+
+  const onPlusCartItem = (id) => {
+    dispatch(plusCartItem(id))
+  }
+
+  const onMinusCartItem = (id) => {
+    dispatch(minusCartItem(id))
+  }
+
+  const onClickOrder = () => {
+    console.log('ВАШ ЗАКАЗ: ', items);
   }
 
   return (
@@ -105,6 +118,7 @@ function Cart() {
             <div className="content__items">
               {addedPizzas.map((obj) => (
                 <CartItem
+                  key={obj.id}
                   id={obj.id}
                   name={obj.name}
                   type={obj.type}
@@ -112,6 +126,8 @@ function Cart() {
                   totalPrice={items[obj.id].totalPrice}
                   totalCount={items[obj.id].items.length}
                   onRemove={onRemoveItem}
+                  onMinus={onMinusCartItem}
+                  onPlus={onPlusCartItem}
                 />
               ))}
             </div>
@@ -140,12 +156,13 @@ function Cart() {
                       stokelinejoin="round"
                     />
                   </svg>
-
-                  <span>Вернуться назад</span>
+                  <Link to="/">
+                   <span>Вернуться назад</span>
+                  </Link>
                 </a>
-                <div className="button pay-btn">
+                <Button onClick={onClickOrder} className="pay-btn">
                   <span>Оплатить сейчас</span>
-                </div>
+                </Button>
               </div>
             </div>
           </div>
